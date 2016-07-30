@@ -1,8 +1,13 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 public class Main {
 
@@ -24,10 +29,27 @@ public class Main {
         while (fileScanner.hasNext()) {
             words.add(fileScanner.nextLine());
         }
-        WordVariant[] variants = cutString(input, input.length() / 2, words);
-        for (WordVariant variant : variants) {
-            System.out.println(variant);
+
+        int temp = input.length() / 3;
+        int tmpCount = 0;
+
+        List allVariants = new ArrayList();
+        for (int position = temp; position < (input.length() - temp); position++) {
+            System.out.println("Count: "+ ++tmpCount);
+            WordVariant[] variants = cutString(input, position, words);
+            for (WordVariant variant : variants) {
+                System.out.println(variant);
+            }
+            allVariants.add(variants);
+            System.out.println("\n\n");
         }
+
+        allVariants.sort(new WordVariantsComparator());
+
+        System.out.println("For rebus:");
+        WordVariant[] forRebus = (WordVariant[]) allVariants.get(allVariants.size()/2);
+        System.out.println(forRebus[0]);
+        System.out.println(forRebus[1]);
     }
 
 
@@ -127,7 +149,51 @@ public class Main {
         public String toString() {
             return "Original word: " + originalWord + "\n" +
                     "Rebus word: " + rebusWord + "\n" +
-                    "Changes count: " + changesCount + "\n\n\n";
+                    "Changes count: " + changesCount + "\n";
+        }
+    }
+
+    static class WordVariantsComparator implements Comparator<WordVariant[]> {
+
+        @Override
+        public int compare(WordVariant[] o1, WordVariant[] o2) {
+            return o1[0].changesCount+o1[1].changesCount -
+                    o2[0].changesCount+o2[1].changesCount;
+        }
+
+        @Override
+        public Comparator<WordVariant[]> reversed() {
+            return null;
+        }
+
+        @Override
+        public Comparator<WordVariant[]> thenComparing(Comparator<? super WordVariant[]> other) {
+            return null;
+        }
+
+        @Override
+        public <U> Comparator<WordVariant[]> thenComparing(Function<? super WordVariant[], ? extends U> keyExtractor, Comparator<? super U> keyComparator) {
+            return null;
+        }
+
+        @Override
+        public <U extends Comparable<? super U>> Comparator<WordVariant[]> thenComparing(Function<? super WordVariant[], ? extends U> keyExtractor) {
+            return null;
+        }
+
+        @Override
+        public Comparator<WordVariant[]> thenComparingInt(ToIntFunction<? super WordVariant[]> keyExtractor) {
+            return null;
+        }
+
+        @Override
+        public Comparator<WordVariant[]> thenComparingLong(ToLongFunction<? super WordVariant[]> keyExtractor) {
+            return null;
+        }
+
+        @Override
+        public Comparator<WordVariant[]> thenComparingDouble(ToDoubleFunction<? super WordVariant[]> keyExtractor) {
+            return null;
         }
     }
 
